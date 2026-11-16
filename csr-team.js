@@ -91,22 +91,44 @@ function renderResultView() {
   setActiveView("teamResultView");
 }
 
+let renderedViewKey = null;
+
+function viewKey() {
+  if (!game.started) return "waiting";
+  if (game.complete) return "final";
+  if (game.results[game.currentRound]) return `result-${game.currentRound}`;
+  return `round-${game.currentRound}`;
+}
+
 function renderCurrentView() {
+  const key = viewKey();
+  const isNewView = key !== renderedViewKey;
+  renderedViewKey = key;
+
   if (!game.started) {
-    $("waitingMessage").textContent = "The challenge hasn’t started yet. Stay on this screen — it will update automatically.";
-    $("teamNameLabel").textContent = "";
-    setActiveView("waitingView");
+    if (isNewView) {
+      $("waitingMessage").textContent = "The challenge hasn’t started yet. Stay on this screen — it will update automatically.";
+      $("teamNameLabel").textContent = "";
+      setActiveView("waitingView");
+    }
     return;
   }
   if (game.complete) {
-    setActiveView("teamFinalView");
+    if (isNewView) setActiveView("teamFinalView");
     return;
   }
   if (game.results[game.currentRound]) {
     renderResultView();
     return;
   }
-  renderRoundView();
+  if (isNewView) {
+    renderRoundView();
+  } else {
+    // Same round still in progress: refresh status text only, never rebuild
+    // the answer input — that would wipe out an in-progress, unsubmitted answer.
+    const already = Boolean(game.answers[game.currentRound][teamIndex]);
+    $("teamSubmitStatus").textContent = already ? "Answer submitted. You can change it until the round is locked." : "Not submitted yet.";
+  }
 }
 
 async function submitAnswer() {
@@ -130,6 +152,7 @@ function logout() {
   sessionStorage.removeItem(SESSION_KEY);
   teamCode = null;
   teamIndex = -1;
+  renderedViewKey = null;
   if (pollInterval) clearInterval(pollInterval);
   if (timerInterval) clearInterval(timerInterval);
   $("teamCodeInput").value = "";
