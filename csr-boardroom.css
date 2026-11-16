@@ -224,12 +224,11 @@ a.btn-link { display: block; width: 100%; text-align: center; text-decoration: n
 .admin-answer-key { margin-top: 18px; padding: 15px; border: 1px solid rgba(245,197,24,.22); border-radius: 12px; background: rgba(245,197,24,.055); }
 .admin-answer-key > strong { display: block; margin-top: 8px; color: var(--gold-soft); font-size: .92rem; line-height: 1.55; }
 .admin-answer-key p { margin: 8px 0 0; color: #c1c6ce; font-size: .76rem; line-height: 1.6; }
-.admin-team-results { margin-top: 18px; }
-.admin-result-list { display: grid; gap: 8px; margin-top: 10px; }
-.admin-result-row { display: grid; grid-template-columns: minmax(80px, .7fr) minmax(0, 1.3fr); gap: 5px 12px; padding: 10px; border: 1px solid rgba(255,255,255,.07); border-radius: 9px; background: rgba(0,0,0,.2); }
-.admin-result-row strong { overflow: hidden; font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
-.admin-result-row > span { color: var(--muted); font-size: .67rem; line-height: 1.5; }
-.admin-result-row small { grid-column: 1 / -1; color: #8e8e96; font-size: .62rem; line-height: 1.45; }
+.admin-team-results { margin-top: 14px; }
+.admin-team-results .table-wrap { margin-top: 10px; }
+.admin-score-table th, .admin-score-table td { padding: 7px 9px; font-size: .66rem; line-height: 1.4; }
+.admin-score-table td.wrap-cell { white-space: normal; min-width: 150px; }
+.admin-score-table td:first-child { white-space: nowrap; }
 .admin-final-message { margin: 18px 0; padding: 12px; border: 1px solid rgba(39,224,122,.16); border-radius: 10px; color: var(--muted); background: rgba(39,224,122,.04); font-size: .75rem; line-height: 1.6; }
 .admin-footer-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.08); }
 .admin-footer-actions .btn-secondary, .admin-footer-actions .btn-danger { width: 100%; }

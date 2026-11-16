@@ -278,13 +278,16 @@ function renderAdminPanel() {
     : game.timerRemaining);
 
   $("adminTeamResults").innerHTML = results
-    ? `<div class="section-kicker">ROUND SCORING</div><div class="admin-result-list">${results.map((result, index) => {
-      const selected = game.answers[game.currentRound][index];
-      const answer = round.options
-        ? (selected ? `${selected} — ${round.options["ABCD".indexOf(selected)]}` : "No answer")
-        : (game.displayAnswers ? game.displayAnswers[index] : selected);
-      return `<div class="admin-result-row"><strong>${escapeHtml(game.teams[index])}</strong><span>${escapeHtml(answer)}</span><span>${result.points} pts · Trust ${result.trust > 0 ? "+" : ""}${result.trust} · ${result.lives.toLocaleString("en-IN")} lives</span><small>${escapeHtml(result.reason)}</small></div>`;
-    }).join("")}</div>`
+    ? `<div class="section-kicker">ROUND SCORING</div><div class="table-wrap"><table class="results-table admin-score-table">
+      <thead><tr><th>TEAM</th><th>ANSWER</th><th>PTS</th><th>TRUST</th><th>LIVES</th><th>REASON</th></tr></thead>
+      <tbody>${results.map((result, index) => {
+        const selected = game.answers[game.currentRound][index];
+        const answer = round.options
+          ? (selected ? `${selected} — ${round.options["ABCD".indexOf(selected)]}` : "No answer")
+          : (game.displayAnswers ? game.displayAnswers[index] : selected);
+        return `<tr><td>${escapeHtml(game.teams[index])}</td><td class="wrap-cell">${escapeHtml(answer)}</td><td>${result.points}</td><td>${result.trust > 0 ? "+" : ""}${result.trust}</td><td>${result.lives.toLocaleString("en-IN")}</td><td class="wrap-cell">${escapeHtml(result.reason)}</td></tr>`;
+      }).join("")}</tbody>
+    </table></div>`
     : `<p class="muted">Team responses are ready to score as they come in from each team’s device.</p>`;
 }
 
