@@ -257,7 +257,7 @@ function renderAdminPanel() {
     : `Round ${game.currentRound + 1} ${results ? "locked" : "in progress"}`;
   $("adminRoundControls").hidden = false;
   $("adminFinalMessage").hidden = !game.complete;
-  $("adminRoundLabel").textContent = `ROUND ${String(game.currentRound + 1).padStart(2, "0")} / 0${ROUNDS.length}`;
+  $("adminRoundLabel").innerHTML = `<strong>${String(game.currentRound + 1).padStart(2, "0")}</strong><small>of ${ROUNDS.length}</small>`;
   $("adminRoundTitle").textContent = round.title;
   $("adminAnswerKeyText").textContent = key ? key.answer : "";
   $("adminTakeaway").textContent = key ? key.takeaway : "";
