@@ -177,6 +177,7 @@ button { font: inherit; cursor: pointer; }
   font-size: .72rem;
 }
 .btn-link:hover, .reset-button:hover { color: var(--gold); }
+a.btn-link { display: block; width: 100%; text-align: center; text-decoration: none; }
 [hidden] { display: none !important; }
 
 .round-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
