@@ -30,6 +30,7 @@ function setActiveView(viewId) {
   ["setupView", "roundView", "resultView", "finalView", "adminPanel"].forEach((id) => {
     $(id).hidden = id !== (adminPanelOpen ? "adminPanel" : viewId);
   });
+  $("impactPanel").hidden = adminPanelOpen;
 }
 
 function renderCurrentView() {
