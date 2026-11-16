@@ -31,6 +31,7 @@ function setActiveView(viewId) {
     $(id).hidden = id !== (adminPanelOpen ? "adminPanel" : viewId);
   });
   $("impactPanel").hidden = adminPanelOpen;
+  $("introSection").hidden = adminPanelOpen;
 }
 
 function renderCurrentView() {
