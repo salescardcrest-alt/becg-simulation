@@ -197,7 +197,7 @@ function init() {
     await joinWithCode(code);
   });
   $("teamSubmitButton").addEventListener("click", submitAnswer);
-  ["teamLogoutButton", "teamLogoutButton2", "teamLogoutButton3"].forEach((id) => {
+  ["teamLogoutButton", "teamLogoutButton2", "teamLogoutButton3", "teamLogoutButton4"].forEach((id) => {
     $(id).addEventListener("click", logout);
   });
 
