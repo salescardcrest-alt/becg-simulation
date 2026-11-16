@@ -94,7 +94,7 @@ function renderScoreboard() {
 function renderCodesPanel() {
   const panel = $("codesPanel");
   if (!panel) return;
-  if (!game.started) {
+  if (!game.started || !adminAuthenticated) {
     panel.hidden = true;
     return;
   }
@@ -424,6 +424,7 @@ async function init() {
       adminPanelOpen = true;
       setActiveView("adminPanel");
       renderAdminPanel();
+      renderCodesPanel();
     } catch (err) {
       alert(err.message);
     }
