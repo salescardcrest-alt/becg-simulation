@@ -175,16 +175,9 @@ function ensureTimerTick() {
   timerInterval = game.timerEndAt ? setInterval(updateTimerDisplay, 250) : null;
 }
 
-function scoreAnswer(roundIndex, answer) {
-  const key = ANSWER_KEY[roundIndex];
-  if (!ROUNDS[roundIndex].options) return key.score(answer);
-  if (!answer) return { points: 0, trust: 0, lives: 0, reason: "No answer submitted." };
-  return { ...key.outcomes["ABCD".indexOf(answer)] };
-}
-
 async function lockRound() {
   try {
-    const fresh = await apiGet();
+    const fresh = await apiPost({ action: "adminState", pin: adminPin });
     game = fresh;
     const answers = game.answers[game.currentRound];
     const hasOptions = Boolean(ROUNDS[game.currentRound].options);
@@ -192,8 +185,7 @@ async function lockRound() {
       const proceed = confirm("Some teams haven’t submitted an answer yet. They will receive zero points for this round. Lock answers anyway?");
       if (!proceed) return;
     }
-    const results = answers.map((answer) => scoreAnswer(game.currentRound, answer));
-    game = await apiPost({ action: "lockRound", pin: adminPin, results });
+    game = await apiPost({ action: "lockRound", pin: adminPin });
     ensureTimerTick();
     renderCurrentView();
   } catch (err) {
@@ -250,7 +242,7 @@ function renderAdminPanel() {
   }
 
   const round = ROUNDS[game.currentRound];
-  const key = ANSWER_KEY[game.currentRound];
+  const key = game.answerKey;
   const results = game.results[game.currentRound];
   $("adminStageLabel").textContent = game.complete
     ? "Challenge complete"
@@ -259,8 +251,8 @@ function renderAdminPanel() {
   $("adminFinalMessage").hidden = !game.complete;
   $("adminRoundLabel").textContent = `ROUND ${String(game.currentRound + 1).padStart(2, "0")} / 0${ROUNDS.length}`;
   $("adminRoundTitle").textContent = round.title;
-  $("adminAnswerKeyText").textContent = key.answer;
-  $("adminTakeaway").textContent = key.takeaway;
+  $("adminAnswerKeyText").textContent = key ? key.answer : "";
+  $("adminTakeaway").textContent = key ? key.takeaway : "";
   $("adminAnswerEntry").hidden = Boolean(results) || game.complete;
   if (!results && !game.complete) {
     renderSubmissionStatus("adminAnswerList");
@@ -282,7 +274,7 @@ function renderAdminPanel() {
       const selected = game.answers[game.currentRound][index];
       const answer = round.options
         ? (selected ? `${selected} — ${round.options["ABCD".indexOf(selected)]}` : "No answer")
-        : key.displayAnswer(selected);
+        : (game.displayAnswers ? game.displayAnswers[index] : selected);
       return `<div class="admin-result-row"><strong>${escapeHtml(game.teams[index])}</strong><span>${escapeHtml(answer)}</span><span>${result.points} pts · Trust ${result.trust > 0 ? "+" : ""}${result.trust} · ${result.lives.toLocaleString("en-IN")} lives</span><small>${escapeHtml(result.reason)}</small></div>`;
     }).join("")}</div>`
     : `<p class="muted">Team responses are ready to score as they come in from each team’s device.</p>`;
@@ -389,7 +381,9 @@ function startPolling() {
   if (pollInterval) clearInterval(pollInterval);
   pollInterval = setInterval(async () => {
     try {
-      const fresh = await apiGet();
+      const fresh = adminAuthenticated
+        ? await apiPost({ action: "adminState", pin: adminPin })
+        : await apiGet();
       const roundChanged = !game || fresh.currentRound !== game.currentRound || Boolean(fresh.results[fresh.currentRound]) !== Boolean(game.results[game.currentRound]) || fresh.started !== game.started || fresh.complete !== game.complete;
       game = fresh;
       if (roundChanged) ensureTimerTick();
@@ -410,7 +404,7 @@ async function init() {
     event.preventDefault();
     const pin = $("adminPinInput").value;
     try {
-      const { ok } = await apiPost({ action: "authAdmin", pin });
+      const { ok, state } = await apiPost({ action: "authAdmin", pin });
       if (!ok) {
         $("adminPinError").hidden = false;
         $("adminPinInput").select();
@@ -422,6 +416,7 @@ async function init() {
       adminPin = pin;
       adminAuthenticated = true;
       adminPanelOpen = true;
+      game = state;
       setActiveView("adminPanel");
       renderAdminPanel();
       renderCodesPanel();

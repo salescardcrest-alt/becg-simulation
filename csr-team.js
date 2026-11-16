@@ -10,12 +10,6 @@ let timerInterval = null;
 let pollInterval = null;
 const $ = (id) => document.getElementById(id);
 
-async function apiGet() {
-  const res = await fetch(API_URL, { cache: "no-store" });
-  if (!res.ok) throw new Error("Could not reach the challenge server.");
-  return res.json();
-}
-
 async function apiPost(payload) {
   const res = await fetch(API_URL, {
     method: "POST",
@@ -23,7 +17,11 @@ async function apiPost(payload) {
     body: JSON.stringify(payload),
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Request failed.");
+  if (!res.ok) {
+    const err = new Error(data.error || "Request failed.");
+    err.rejected = true;
+    throw err;
+  }
   return data;
 }
 
@@ -141,14 +139,8 @@ function logout() {
 
 async function joinWithCode(code) {
   try {
-    const fresh = await apiGet();
-    const index = fresh.teamCodes.indexOf(code);
-    if (!fresh.started || index === -1) {
-      $("loginError").textContent = "Code not recognised. Check with your facilitator.";
-      $("loginError").hidden = false;
-      return false;
-    }
-    game = fresh;
+    const { teamIndex: index, state } = await apiPost({ action: "joinTeam", code });
+    game = state;
     teamIndex = index;
     teamCode = code;
     sessionStorage.setItem(SESSION_KEY, code);
@@ -168,19 +160,15 @@ function startPolling() {
   if (pollInterval) clearInterval(pollInterval);
   pollInterval = setInterval(async () => {
     try {
-      const fresh = await apiGet();
-      const index = fresh.teamCodes.indexOf(teamCode);
-      if (index === -1) {
-        logout();
-        return;
-      }
-      const roundChanged = fresh.currentRound !== game.currentRound || Boolean(fresh.results[fresh.currentRound]) !== Boolean(game.results[game.currentRound]);
+      const { teamIndex: index, state } = await apiPost({ action: "joinTeam", code: teamCode });
       teamIndex = index;
-      game = fresh;
+      const roundChanged = state.currentRound !== game.currentRound || Boolean(state.results[state.currentRound]) !== Boolean(game.results[game.currentRound]);
+      game = state;
       if (roundChanged) ensureTimerTick();
       renderCurrentView();
     } catch (err) {
-      /* transient network hiccup — try again on the next tick */
+      if (err.rejected) logout();
+      /* otherwise a transient network hiccup — try again on the next tick */
     }
   }, POLL_MS);
 }

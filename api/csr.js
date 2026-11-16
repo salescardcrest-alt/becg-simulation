@@ -1,4 +1,5 @@
 const { getRedis } = require("./_redis");
+const { scoreAnswer, keySummary, displayAnswer } = require("./_answer-key");
 
 const KEY = "csrBoardroom:game";
 const TOTAL_TEAMS = 8;
@@ -30,8 +31,17 @@ function generateCodes(count) {
 }
 
 function publicState(game) {
-  const { adminPin, ...rest } = game;
+  const { adminPin, teamCodes, ...rest } = game;
   return rest;
+}
+
+function adminState(game) {
+  return {
+    ...publicState(game),
+    teamCodes: game.teamCodes,
+    answerKey: keySummary(game.currentRound),
+    displayAnswers: game.answers[game.currentRound].map((value) => displayAnswer(game.currentRound, value)),
+  };
 }
 
 function isValidGameShape(game) {
@@ -66,7 +76,25 @@ module.exports = async (req, res) => {
 
     switch (body.action) {
       case "authAdmin": {
-        res.status(200).json({ ok: typeof body.pin === "string" && body.pin === game.adminPin });
+        const ok = typeof body.pin === "string" && body.pin === game.adminPin;
+        res.status(200).json(ok ? { ok, state: adminState(game) } : { ok });
+        return;
+      }
+
+      case "adminState": {
+        if (!isAdmin) { res.status(403).json({ error: "Invalid facilitator PIN." }); return; }
+        res.status(200).json(adminState(game));
+        return;
+      }
+
+      case "joinTeam": {
+        const code = String(body.code || "").trim();
+        const teamIndex = game.teamCodes.indexOf(code);
+        if (!game.started || teamIndex === -1) {
+          res.status(404).json({ error: "Code not recognised. Check with your facilitator." });
+          return;
+        }
+        res.status(200).json({ teamIndex, state: publicState(game) });
         return;
       }
 
@@ -90,7 +118,7 @@ module.exports = async (req, res) => {
         game.started = true;
         game.updatedAt = new Date().toISOString();
         await redis.set(KEY, game);
-        res.status(200).json(publicState(game));
+        res.status(200).json(adminState(game));
         return;
       }
 
@@ -112,15 +140,11 @@ module.exports = async (req, res) => {
         if (!isAdmin) { res.status(403).json({ error: "Invalid facilitator PIN." }); return; }
         if (game.complete) { res.status(400).json({ error: "The challenge is already complete." }); return; }
         if (game.results[game.currentRound]) { res.status(409).json({ error: "This round is already locked." }); return; }
-        if (!Array.isArray(body.results) || body.results.length !== TOTAL_TEAMS) {
-          res.status(400).json({ error: "Malformed results payload." });
-          return;
-        }
-        game.results[game.currentRound] = body.results;
+        game.results[game.currentRound] = game.answers[game.currentRound].map((answer) => scoreAnswer(game.currentRound, answer));
         game.timerEndAt = null;
         game.updatedAt = new Date().toISOString();
         await redis.set(KEY, game);
-        res.status(200).json(publicState(game));
+        res.status(200).json(adminState(game));
         return;
       }
 
@@ -136,7 +160,7 @@ module.exports = async (req, res) => {
         }
         game.updatedAt = new Date().toISOString();
         await redis.set(KEY, game);
-        res.status(200).json(publicState(game));
+        res.status(200).json(adminState(game));
         return;
       }
 
@@ -158,7 +182,7 @@ module.exports = async (req, res) => {
         }
         game.updatedAt = new Date().toISOString();
         await redis.set(KEY, game);
-        res.status(200).json(publicState(game));
+        res.status(200).json(adminState(game));
         return;
       }
 
@@ -166,7 +190,7 @@ module.exports = async (req, res) => {
         if (!isAdmin) { res.status(403).json({ error: "Invalid facilitator PIN." }); return; }
         game = defaultGame();
         await redis.set(KEY, game);
-        res.status(200).json(publicState(game));
+        res.status(200).json(adminState(game));
         return;
       }
 

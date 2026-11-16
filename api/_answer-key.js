@@ -1,4 +1,3 @@
-/* Facilitator-only answer key. Never loaded by the team join page (csr-team.html). */
 const ANSWER_KEY = [
   {
     answer: "27 crore",
@@ -64,3 +63,23 @@ const ANSWER_KEY = [
     ],
   },
 ];
+
+function scoreAnswer(roundIndex, answer) {
+  const key = ANSWER_KEY[roundIndex];
+  if (key.score) return key.score(answer);
+  if (!answer) return { points: 0, trust: 0, lives: 0, reason: "No answer submitted." };
+  return { ...key.outcomes["ABCD".indexOf(answer)] };
+}
+
+function keySummary(roundIndex) {
+  const key = ANSWER_KEY[roundIndex];
+  if (!key) return null;
+  return { answer: key.answer, takeaway: key.takeaway };
+}
+
+function displayAnswer(roundIndex, value) {
+  const key = ANSWER_KEY[roundIndex];
+  return key.displayAnswer ? key.displayAnswer(value) : value;
+}
+
+module.exports = { ANSWER_KEY, scoreAnswer, keySummary, displayAnswer };
