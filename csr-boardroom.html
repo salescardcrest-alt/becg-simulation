@@ -16,6 +16,7 @@
   <div class="orb orb-cyan" aria-hidden="true"></div>
 
   <header class="site-header">
+    <a class="site-back" href="index.html">← Home</a>
     <span class="site-wordmark">
       <span class="site-title">BECG SIMULATION</span>
       <span class="site-tag">CSR Boardroom Challenge · FY 2022–23</span>
@@ -24,6 +25,22 @@
   </header>
 
   <main class="app">
+    <div class="panel login-panel" id="pinGateView" hidden>
+      <div class="section-kicker">FACILITATOR ACCESS</div>
+      <h2>Enter the facilitator PIN</h2>
+      <p class="muted">A challenge is already running. Enter the PIN chosen at setup to open the boardroom screen.</p>
+      <form id="gatePinForm">
+        <label class="pin-setup-field" for="gatePinInput">
+          <span>FACILITATOR PIN</span>
+          <input id="gatePinInput" type="password" inputmode="numeric" pattern="[0-9]{4,8}" maxlength="8" autocomplete="current-password" placeholder="Enter PIN" required>
+        </label>
+        <p class="pin-error" id="gatePinError" role="alert" hidden>That PIN doesn’t match. Try again.</p>
+        <button class="btn-primary" type="submit">Unlock boardroom <span aria-hidden="true">→</span></button>
+      </form>
+      <a class="btn-link" href="csr-team.html">← Back to team page</a>
+    </div>
+
+    <div id="boardroomContent" hidden>
     <section class="intro">
       <div class="eyebrow"><span class="live-dot"></span> BECG CLASSROOM SIMULATION <span class="eyebrow-separator">/</span> FY 2022–23</div>
       <h1>CSR BOARDROOM<br><span>CHALLENGE</span></h1>
@@ -189,23 +206,8 @@
       </aside>
     </div>
     <footer>BUILT FOR BETTER DECISIONS <span>·</span> CSR BOARDROOM CHALLENGE</footer>
+    </div>
   </main>
-  <dialog class="pin-dialog" id="adminPinDialog" aria-labelledby="adminPinTitle">
-    <form id="adminPinForm">
-      <span class="section-kicker">FACILITATOR ACCESS</span>
-      <h2 id="adminPinTitle">Admin Panel</h2>
-      <p class="muted">Enter the PIN chosen during setup to manage the round and reveal its answer key.</p>
-      <label class="pin-setup-field" for="adminPinInput">
-        <span>FACILITATOR PIN</span>
-        <input id="adminPinInput" type="password" inputmode="numeric" pattern="[0-9]{4,8}" maxlength="8" autocomplete="current-password" placeholder="Enter PIN" required>
-      </label>
-      <p class="pin-error" id="adminPinError" role="alert" hidden>That PIN doesn’t match. Try again.</p>
-      <div class="pin-dialog-actions">
-        <button class="btn-secondary" id="cancelAdminLoginButton" type="button">Cancel</button>
-        <button class="btn-primary" type="submit">Unlock Admin Panel</button>
-      </div>
-    </form>
-  </dialog>
   <script src="csr-rounds.js"></script>
   <script src="csr-boardroom.js"></script>
 </body>

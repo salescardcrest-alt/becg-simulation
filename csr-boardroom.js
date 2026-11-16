@@ -33,6 +33,14 @@ function setActiveView(viewId) {
 }
 
 function renderCurrentView() {
+  if (game.started && !adminAuthenticated) {
+    $("pinGateView").hidden = false;
+    $("boardroomContent").hidden = true;
+    return;
+  }
+  $("pinGateView").hidden = true;
+  $("boardroomContent").hidden = false;
+
   if (!game.started) {
     setActiveView("setupView");
   } else if (game.complete) {
@@ -285,16 +293,9 @@ function openAdminPanel() {
     alert("Set the team names and facilitator PIN, then start the challenge before opening the Admin Panel.");
     return;
   }
-  if (adminAuthenticated) {
-    adminPanelOpen = true;
-    setActiveView("adminPanel");
-    renderAdminPanel();
-    return;
-  }
-  $("adminPinInput").value = "";
-  $("adminPinError").hidden = true;
-  $("adminPinDialog").showModal();
-  $("adminPinInput").focus();
+  adminPanelOpen = true;
+  setActiveView("adminPanel");
+  renderAdminPanel();
 }
 
 function closeAdminPanel() {
@@ -399,27 +400,24 @@ async function init() {
   $("startGameButton").addEventListener("click", startGame);
   $("openAdminPanelButton").addEventListener("click", openAdminPanel);
   $("finalAdminButton").addEventListener("click", openAdminPanel);
-  $("cancelAdminLoginButton").addEventListener("click", () => $("adminPinDialog").close());
-  $("adminPinForm").addEventListener("submit", async (event) => {
+  $("gatePinForm").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const pin = $("adminPinInput").value;
+    const pin = $("gatePinInput").value;
     try {
       const { ok, state } = await apiPost({ action: "authAdmin", pin });
       if (!ok) {
-        $("adminPinError").hidden = false;
-        $("adminPinInput").select();
+        $("gatePinError").hidden = false;
+        $("gatePinInput").select();
         return;
       }
-      $("adminPinDialog").close();
-      $("adminPinError").hidden = true;
-      $("adminPinInput").value = "";
+      $("gatePinError").hidden = true;
+      $("gatePinInput").value = "";
       adminPin = pin;
       adminAuthenticated = true;
       adminPanelOpen = true;
       game = state;
-      setActiveView("adminPanel");
-      renderAdminPanel();
-      renderCodesPanel();
+      ensureTimerTick();
+      renderCurrentView();
     } catch (err) {
       alert(err.message);
     }
