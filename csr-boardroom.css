@@ -225,9 +225,6 @@ a.btn-link { display: block; width: 100%; text-align: center; text-decoration: n
 .admin-control-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
 .admin-control-actions .btn-secondary, .admin-control-actions .btn-primary { width: auto; min-height: 38px; margin: 0; padding: 0 10px; font-size: .67rem; }
 .admin-control-actions .btn-primary { grid-column: 1 / -1; }
-.admin-answer-key { margin-top: 10px; padding: 3px 0 3px 14px; border-left: 2px solid var(--gold); }
-.admin-answer-key > strong { display: block; margin-top: 4px; color: var(--gold-soft); font-size: .9rem; line-height: 1.4; }
-.admin-answer-key p { margin: 4px 0 0; color: #c1c6ce; font-size: .73rem; line-height: 1.5; }
 .admin-team-results { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
 .admin-team-results .table-wrap { margin-top: 8px; max-height: 170px; overflow-y: auto; }
 .admin-score-table th, .admin-score-table td { padding: 6px 9px; font-size: .65rem; line-height: 1.35; }

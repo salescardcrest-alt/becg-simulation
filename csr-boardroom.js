@@ -252,7 +252,6 @@ function renderAdminPanel() {
   }
 
   const round = ROUNDS[game.currentRound];
-  const key = game.answerKey;
   const results = game.results[game.currentRound];
   $("adminStageLabel").textContent = game.complete
     ? "Challenge complete"
@@ -261,8 +260,6 @@ function renderAdminPanel() {
   $("adminFinalMessage").hidden = !game.complete;
   $("adminRoundLabel").innerHTML = `<strong>${String(game.currentRound + 1).padStart(2, "0")}</strong><small>of ${ROUNDS.length}</small>`;
   $("adminRoundTitle").textContent = round.title;
-  $("adminAnswerKeyText").textContent = key ? key.answer : "";
-  $("adminTakeaway").textContent = key ? key.takeaway : "";
   $("adminAnswerEntry").hidden = Boolean(results) || game.complete;
   if (!results && !game.complete) {
     renderSubmissionStatus("adminAnswerList");
@@ -307,8 +304,6 @@ function closeAdminPanel() {
   adminAuthenticated = false;
   adminPanelOpen = false;
   adminPin = null;
-  $("adminAnswerKeyText").textContent = "";
-  $("adminTakeaway").textContent = "";
   $("adminTeamResults").innerHTML = "";
   renderCurrentView();
 }
@@ -351,8 +346,6 @@ async function resetGame() {
   adminPanelOpen = false;
   adminPin = null;
   $("setupAdminPin").value = "";
-  $("adminAnswerKeyText").textContent = "";
-  $("adminTakeaway").textContent = "";
   $("adminTeamResults").innerHTML = "";
   renderSetup();
   renderCurrentView();
