@@ -245,6 +245,7 @@ function renderFinal() {
 function renderAdminPanel() {
   if (!game.started) {
     $("adminStageLabel").textContent = "Challenge not started";
+    $("adminStage").className = "admin-stage is-idle";
     $("adminRoundControls").hidden = true;
     $("adminFinalMessage").hidden = false;
     $("adminFinalMessage").textContent = "Set the team names and facilitator PIN, then start the challenge.";
@@ -256,6 +257,7 @@ function renderAdminPanel() {
   $("adminStageLabel").textContent = game.complete
     ? "Challenge complete"
     : `Round ${game.currentRound + 1} ${results ? "locked" : "in progress"}`;
+  $("adminStage").className = `admin-stage ${game.complete ? "is-complete" : results ? "is-locked" : "is-live"}`;
   $("adminRoundControls").hidden = false;
   $("adminFinalMessage").hidden = !game.complete;
   $("adminRoundLabel").innerHTML = `<strong>${String(game.currentRound + 1).padStart(2, "0")}</strong><small>of ${ROUNDS.length}</small>`;
