@@ -229,7 +229,7 @@ a.btn-link { display: block; width: 100%; text-align: center; text-decoration: n
 }
 #adminAnswerList::-webkit-scrollbar, .admin-team-results .table-wrap::-webkit-scrollbar { width: 6px; }
 #adminAnswerList::-webkit-scrollbar-thumb, .admin-team-results .table-wrap::-webkit-scrollbar-thumb { background: rgba(245,197,24,.35); border-radius: 6px; }
-#adminAnswerList { max-height: 140px; overflow-y: auto; padding-right: 4px; }
+#adminAnswerList { max-height: none; overflow-y: visible; padding-right: 4px; }
 
 .admin-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .admin-heading h2 { display: flex; align-items: center; gap: 9px; margin: 0; font: 800 1.2rem Orbitron, sans-serif; letter-spacing: -.01em; }
