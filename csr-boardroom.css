@@ -397,6 +397,9 @@ a.btn-link { display: block; width: 100%; text-align: center; text-decoration: n
 .final-highlight { padding: 8px 10px; border: 1px solid rgba(255,255,255,.09); border-radius: 9px; color: var(--muted); font-size: .65rem; }
 .final-highlight strong { color: var(--gold); }
 .final-table td:nth-child(5) { color: var(--green); }
+.final-table tr.is-me td { background: rgba(245,197,24,.08); }
+.final-table tr.is-me td:first-child { position: relative; }
+.final-table tr.is-me td:first-child::before { content: "YOU"; position: absolute; left: -2px; top: -9px; padding: 1px 5px; border-radius: 5px; background: var(--gold); color: #1a1400; font-size: .5rem; font-weight: 800; letter-spacing: .4px; }
 .final-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
 .final-actions .btn-primary, .final-actions .btn-secondary { margin: 0; }
 footer { padding: 20px 0 16px; color: #696970; font-size: .59rem; font-weight: 700; letter-spacing: 1.5px; text-align: center; }

@@ -90,11 +90,17 @@
         <button class="btn-link" id="teamLogoutButton3" type="button">Logout</button>
       </div>
 
-      <div class="panel result-panel" id="teamFinalView" hidden>
+      <div class="panel result-panel final-panel" id="teamFinalView" hidden>
         <div class="trophy" aria-hidden="true">✦</div>
-        <span class="section-kicker">CHALLENGE COMPLETE</span>
-        <h2>All six rounds are done</h2>
-        <p class="muted">Check the main screen for the final standings.</p>
+        <span class="section-kicker">THE BOARD HAS DECIDED</span>
+        <h2 id="teamWinnerTitle">Challenge complete</h2>
+        <p class="muted" id="teamWinnerSummary"></p>
+        <div class="table-wrap">
+          <table class="results-table final-table">
+            <thead><tr><th>RANK</th><th>TEAM</th><th>POINTS</th><th>TRUST</th><th>LIVES IMPACTED</th></tr></thead>
+            <tbody id="teamFinalResultsBody"></tbody>
+          </table>
+        </div>
         <button class="btn-link" id="teamLogoutButton4" type="button">Logout</button>
       </div>
     </div>

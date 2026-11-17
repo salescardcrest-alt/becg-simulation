@@ -84,6 +84,32 @@ function renderRoundView() {
   setActiveView("teamRoundView");
 }
 
+function rankedTeams() {
+  return game.teams.map((name, index) => {
+    const roundResults = game.results.map((result) => result ? result[index] : null);
+    return {
+      name,
+      points: roundResults.reduce((sum, result) => sum + (result ? result.points : 0), 0),
+      trust: Math.max(0, Math.min(100, 50 + roundResults.reduce((sum, result) => sum + (result ? result.trust : 0), 0))),
+      lives: roundResults.reduce((sum, result) => sum + (result ? result.lives : 0), 0),
+      teamIndex: index,
+    };
+  }).sort((a, b) => b.points - a.points || b.trust - a.trust || b.lives - a.lives || a.teamIndex - b.teamIndex);
+}
+
+function renderTeamFinal() {
+  const teams = rankedTeams();
+  const winner = teams[0];
+  const mine = teams.find((team) => team.teamIndex === teamIndex);
+  $("teamWinnerTitle").textContent = winner.teamIndex === teamIndex ? "Your team takes the board!" : `${winner.name} takes the board`;
+  $("teamWinnerSummary").textContent = mine
+    ? `Your team finished ${String(teams.indexOf(mine) + 1).padStart(2, "0")} with ${mine.points} points · Trust Index ${mine.trust} · ${mine.lives.toLocaleString("en-IN")} estimated lives impacted.`
+    : "";
+  $("teamFinalResultsBody").innerHTML = teams.map((team, index) => `
+    <tr${team.teamIndex === teamIndex ? ' class="is-me"' : ""}><td>${String(index + 1).padStart(2, "0")}</td><td>${escapeHtml(team.name)}</td><td>${team.points} / 100</td><td>${team.trust}</td><td>${team.lives.toLocaleString("en-IN")}</td></tr>
+  `).join("");
+}
+
 function renderResultView() {
   const result = game.results[game.currentRound][teamIndex];
   $("teamResultTitle").textContent = ROUNDS[game.currentRound].title;
@@ -114,6 +140,7 @@ function renderCurrentView() {
     return;
   }
   if (game.complete) {
+    renderTeamFinal();
     if (isNewView) setActiveView("teamFinalView");
     return;
   }
